@@ -1,0 +1,63 @@
+# Cloudflare Workers + Containers — build & deploy configuration.
+#
+# The Worker and the container image defined by ./Dockerfile deploy together:
+# `wrangler deploy` uploads the Worker, builds the image from the Dockerfile,
+# pushes it to Cloudflare's registry, and rolls out container instances.
+# Workers Builds (Git-connected) does the same on push to the production
+# branch; the image build reassembles the bzImage from the Base64 chunks in
+# this repository and verifies it against SHA256SUMS — no network fetch of
+# the artifact is needed at build time.
+#
+# Dashboard wiring (one-time, account side): create a Worker with exactly
+# this name, then Settings > Builds > Connect this repository with
+#   Root directory:  (repo root)
+#   Deploy command:  npx wrangler deploy
+#   Production branch: main
+
+name = "muse-code-test"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+compatibility_flags = ["nodejs_compat"]
+
+# --- Container --------------------------------------------------------------
+# image points at the Dockerfile itself, in the same root as this config.
+# class_name must match the Durable Object class exported from src/index.ts.
+
+[[containers]]
+class_name = "KernelContainer"
+image = "./Dockerfile"
+max_instances = 1
+# Cheapest general-purpose tier (1/4 vCPU, 1 GiB RAM, 4 GB disk): this
+# container hosts the status agent and the QEMU boot test, it does not
+# build kernels in place.
+instance_type = "basic"
+
+[[durable_objects.bindings]]
+name = "KERNEL_CONTAINER"
+class_name = "KernelContainer"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["KernelContainer"]
+
+[observability]
+enabled = true
+
+# Runtime configuration. Secrets (set with `wrangler secret put <NAME>`;
+# they are per-Worker, so set them on THIS Worker even if the musevm
+# Worker already has them):
+#   CONTROL_TOKEN  optional HMAC key for the /cf-containers control API
+#   TS_AUTHKEY     Tailscale auth key (dedicated, reusable) — without it
+#                  tailscaled starts but `tailscale up` is skipped
+#   TUNNEL_TOKEN   cloudflared tunnel token — without it cloudflared
+#                  cannot start
+#   META_API_KEY   Meta Model API key — Muse Code auth inside the
+#                  container (POST /cf-containers/code); without it code
+#                  runs fail with an authRequired error
+# Plain vars (uncomment and edit, or set in the dashboard):
+# [vars]
+# TS_HOSTNAME = "musevm-kernel"
+# TS_LOGIN_SERVER = "https://hs.example.com"
+# APACHE_TUNNEL_HOSTNAME = "www.example.com"
+# The Worker forwards exactly these names into the container
+# (KernelContainer.envVars in src/index.ts).

@@ -1,0 +1,4 @@
+<!doctype html>
+<title>SSI test</title>
+<p>SSI echo (DATE_LOCAL): <!--#echo var="DATE_LOCAL" --></p>
+<p>SSI exec: <!--#exec cmd="echo ssi-exec-works; uname -sr" --></p>

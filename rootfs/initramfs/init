@@ -1,0 +1,7 @@
+#!/bin/sh
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+echo "STAGE1_INIT_OK kernel=$(uname -r)"
+echo "TO_SHELL"
+exec sh
