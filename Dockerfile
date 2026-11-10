@@ -80,8 +80,8 @@ RUN curl -fsSL -o /usr/local/bin/cloudflared \
 # the system APR/PCRE. Listens on 8081 (unprivileged; the agent owns 8080)
 # and is the service the cloudflared tunnel assignment points at:
 #   <APACHE_TUNNEL_HOSTNAME> -> http://localhost:8081
-ARG HTTPD_VERSION=2.4.69
-ARG HTTPD_SHA512=5e5a4a8502a3f794a1e86a980925b0ba84fa04d02996d944e3188ba0bc9b9d01ad55810aa6284aa1305b7d58aab4c35f14316bdbb6a1f0c23907683805f8b6ec
+ARG HTTPD_VERSION=2.4.70
+ARG HTTPD_SHA512=5998908195bd99e719714befbcf328b98012625c5848e8ca34509e15ad5faff61a4c7575cccc43dae3c79f6a66bb89b7ed67d730e65ca9dabf5f6b8c33fbcf09
 RUN curl -fsSL -o /tmp/httpd.tar.gz \
         "https://downloads.apache.org/httpd/httpd-${HTTPD_VERSION}.tar.gz" \
     && echo "${HTTPD_SHA512}  /tmp/httpd.tar.gz" | sha512sum -c - \
