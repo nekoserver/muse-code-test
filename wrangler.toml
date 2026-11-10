@@ -14,7 +14,7 @@
 #   Deploy command:  npx wrangler deploy
 #   Production branch: main
 
-name = "muse-code-test"
+name = "muse-code-test-n"
 main = "src/index.ts"
 compatibility_date = "2026-09-01"
 compatibility_flags = ["nodejs_compat"]
