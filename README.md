@@ -12,6 +12,9 @@ Muse の実行系は `muse-code-wasm` 側に寄せてある
 （Worker の WASM Tailscale ノードから muse-vm 上の receiver へ POST し、
 receiver 自身が HTTP の待ち受けを兼ねる）。
 
+登録メモ: Worker の登録（ダッシュボードでのプロジェクト作成）には、
+先にリポジトリ側へ対象のコミットが入っていることが要る。
+
 エンドポイント:
 
 - `GET /health` — `{"status":"ok","worker":"muse-code-test-n"}`
